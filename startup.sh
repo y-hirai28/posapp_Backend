@@ -4,4 +4,5 @@
 pip install -r requirements.txt
 
 # Start the application with uvicorn
-python -m uvicorn main:app --host 0.0.0.0 --port 8000
+# Azure sets the PORT environment variable
+python -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
