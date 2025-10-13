@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from typing import List
+from typing import List, Optional
 from database import get_db, ProductMaster
 from schemas.product import Product, ProductCreate
 
@@ -21,13 +21,16 @@ async def get_products(db: AsyncSession = Depends(get_db)):
     products = result.scalars().all()
     return products
 
-@router.get("/{product_code}", response_model=Product)
+@router.get("/{product_code}", response_model=Optional[Product])
 async def get_product_by_code(product_code: str, db: AsyncSession = Depends(get_db)):
+    """
+    商品マスタ検索API
+    パラメータのコードに一致する商品コードの商品を１件返す。
+    対象が見つからなかった場合はNULL(None)情報を返す。
+    """
     result = await db.execute(select(ProductMaster).where(ProductMaster.code == product_code))
     product = result.scalar_one_or_none()
-    if not product:
-        raise HTTPException(status_code=404, detail="Product not found")
-    return product
+    return product  # 見つからない場合はNone(NULL)を返す
 
 @router.put("/{product_id}", response_model=Product)
 async def update_product(product_id: int, product: ProductCreate, db: AsyncSession = Depends(get_db)):

@@ -10,10 +10,11 @@ class TradeDetailBase(BaseModel):
     prd_price: int
 
 class TradeDetailCreate(BaseModel):
-    product_id: int
-    quantity: int
-    unit_price: int
-    subtotal: int
+    """購入API用の商品情報（フロントエンドから受け取る）"""
+    product_id: int       # 商品一意キー (PRD_ID)
+    product_code: str     # 商品コード (CODE)
+    product_name: str     # 商品名称 (NAME)
+    unit_price: int       # 商品単価 (PRICE)
 
 class TradeDetail(TradeDetailBase):
     trd_id: int
@@ -30,10 +31,18 @@ class TradeBase(BaseModel):
     total_amt: int
 
 class PurchaseCreate(BaseModel):
+    """購入API リクエスト"""
     items: List[TradeDetailCreate]
-    emp_cd: Optional[str] = '9999999999'
-    store_cd: Optional[str] = '30'
-    pos_no: Optional[str] = '90'
+    emp_cd: Optional[str] = None  # レジ担当者コード（Noneの場合は'9999999999'）
+    store_cd: Optional[str] = None  # 店舗コード（'30'固定）
+    pos_no: Optional[str] = None    # POS機ID（'90'固定）
+
+class PurchaseResponse(BaseModel):
+    """購入API レスポンス"""
+    success: bool                    # 成否（True/False）
+    trd_id: int                      # 取引一意キー
+    total_amt: int                   # 合計金額（税込）
+    total_amt_ex_tax: int            # 合計金額（税抜）
 
 class Purchase(BaseModel):
     trd_id: int
