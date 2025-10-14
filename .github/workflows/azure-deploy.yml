@@ -36,7 +36,7 @@
         - name: Deploy to Azure Web App
           uses: azure/webapps-deploy@v2
           with:
-            app-name: 'app-002-gen10-step3-2-py-oshima2'
+            app-name: 'app-002-gen10-step3-1-py-oshima1'
             slot-name: 'production'
             publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_PROFILE }}
             package: .
