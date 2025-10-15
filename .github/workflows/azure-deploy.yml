@@ -2,38 +2,41 @@ name: Deploy Backend to Azure App Service
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    paths:
+      - '**'
+      - '.github/workflows/azure-deploy.yml'
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Create and activate virtual environment
+      - name: Create deployment bundle (zip)
         run: |
-          python -m venv venv
-          source venv/bin/activate
-
-      - name: Install dependencies
-        run: |
-          source venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          mkdir deploy
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='venv' \
+            --exclude='__pycache__' \
+            --exclude='*.pyc' \
+            --exclude='tests' \
+            ./ ./deploy/
+          cd deploy
+          zip -r ../app.zip .
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'app-002-gen10-step3-2-py-oshima2'
+          app-name: 'app-002-gen10-step3-1-py-oshima1'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: .
+          publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_PROFILE }}
+          package: app.zip
+        env:
+          SCM_DO_BUILD_DURING_DEPLOYMENT: true
