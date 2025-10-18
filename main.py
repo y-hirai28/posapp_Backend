@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import products, purchases
+from routers import products, purchases, debug
 from database import engine, Base
 import asyncio
 import sys
@@ -21,6 +21,7 @@ app.add_middleware(
 
 app.include_router(products.router, prefix="/api/products", tags=["products"])
 app.include_router(purchases.router, prefix="/api/purchases", tags=["purchases"])
+app.include_router(debug.router, prefix="/api", tags=["debug"])
 
 @app.on_event("startup")
 async def startup_event():
