@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-async def execute_sql_file():
+async def execute_sql_file(sql_file_path='table.sql'):
     # Read SQL file
-    with open('../sql/201_insert_trade_and_details.sql', 'r', encoding='utf-8') as f:
+    with open(sql_file_path, 'r', encoding='utf-8') as f:
         sql_content = f.read()
 
     # Split by statements (simple split by semicolon)
@@ -52,4 +52,6 @@ async def execute_sql_file():
         conn.close()
 
 if __name__ == "__main__":
-    asyncio.run(execute_sql_file())
+    import sys
+    sql_file = sys.argv[1] if len(sys.argv) > 1 else 'table.sql'
+    asyncio.run(execute_sql_file(sql_file))

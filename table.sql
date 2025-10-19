@@ -44,14 +44,7 @@ ON DUPLICATE KEY UPDATE
   `name`  = new.`name`,
   `price` = new.`price`;
 
-/* 任意確認 */
--- SELECT `code`, `name`, `price` FROM `product_master` ORDER BY `code`;
 
-/* =========================
-   3) 取引作成（ヘッダ→明細→合計）
-   - trade.TRD_ID は AUTO_INCREMENT 前提
-   - trade.TTL_AMT_EX_TAX が NOT NULL/DEFAULT無しだと 1364 になるため 0 を明示
-   ========================= */
 
 /* ヘッダ */
 INSERT INTO `trade` (`datetime`, `emp_cd`, `store_cd`, `pos_no`, `total_amt`, `TTL_AMT_EX_TAX`)
