@@ -9,7 +9,7 @@ from datetime import datetime
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./posapp.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 if "mysql" in DATABASE_URL:
     ssl_context = ssl.create_default_context()
