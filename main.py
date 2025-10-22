@@ -13,7 +13,7 @@ app = FastAPI(title="POS App API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000","https://app-002-gen10-step3-1-node-oshima1.azurewebsites.net/"],
+    allow_origins=["http://localhost:3000","https://app-002-gen10-step3-1-node-oshima1.azurewebsites.net"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
