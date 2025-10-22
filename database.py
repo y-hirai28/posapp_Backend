@@ -9,7 +9,7 @@ from datetime import datetime
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+aiomysql://tech0gen10student:vY7JZNfU@rdbs-002-gen10-step3-1-oshima1.mysql.database.azure.com:3306/hirai_pos?ssl=true")
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+aiomysql://tech0gen10student:vY7JZNfU@rdbs-002-gen10-step3-1-oshima1.mysql.database.azure.com:3306/hirai_pos")
 
 if "mysql" in DATABASE_URL:
     ssl_context = ssl.create_default_context()
