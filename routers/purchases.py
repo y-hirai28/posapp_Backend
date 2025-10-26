@@ -19,6 +19,11 @@ async def create_purchase(purchase: PurchaseCreate, db: AsyncSession = Depends(g
     1-4: 取引テーブルを更新
     1-5: 合計金額、合計金額（税抜）をフロントへ返す
     """
+    print(f"Received purchase request: {purchase}")
+    print(f"Items: {purchase.items}")
+    for idx, item in enumerate(purchase.items):
+        print(f"  Item {idx}: code={item.code}, qty={item.qty}")
+
     try:
         # 1-1: 取引テーブルへ登録
         # レジ担当者コード（空白の場合は'9999999999'）
