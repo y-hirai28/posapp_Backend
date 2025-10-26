@@ -43,23 +43,40 @@ async def create_purchase(purchase: PurchaseCreate, db: AsyncSession = Depends(g
         trd_id = db_trade.trd_id
 
         # 1-2: 取引明細へ登録
-        for idx, item in enumerate(purchase.items, start=1):
-            db_detail = TradeDetail(
-                trd_id=trd_id,  # 取引一意キー（1-1の登録後の値）
-                dtl_id=idx,  # 取引明細一意キー（採番インクリメンタル 1〜/取引ごと）
-                prd_id=item.product_id,  # 商品一意キー（パラメータ）
-                prd_code=item.product_code,  # 商品コード（パラメータ）
-                prd_name=item.product_name,  # 商品名称（パラメータ）
-                prd_price=item.unit_price,  # 商品単価（パラメータ）
-                tax_cd='10'  # 消費税区分（'10'固定）
+        detail_id = 0
+        v_total_amt_ex_tax = 0
+
+        for item in purchase.items:
+            # 商品コードから商品マスタを取得
+            result = await db.execute(
+                select(ProductMaster).where(ProductMaster.code == item.code)
             )
-            db.add(db_detail)
+            product = result.scalar_one_or_none()
+
+            if not product:
+                raise HTTPException(status_code=404, detail=f"Product with code {item.code} not found")
+
+            # 数量が0以下の場合は1にする
+            qty = item.qty if item.qty > 0 else 1
+
+            # 数量分の明細を登録
+            for _ in range(qty):
+                detail_id += 1
+                db_detail = TradeDetail(
+                    trd_id=trd_id,  # 取引一意キー（1-1の登録後の値）
+                    dtl_id=detail_id,  # 取引明細一意キー（採番インクリメンタル 1〜/取引ごと）
+                    prd_id=product.prd_id,  # 商品一意キー（マスタから取得）
+                    prd_code=product.code,  # 商品コード（マスタから取得）
+                    prd_name=product.name,  # 商品名称（マスタから取得）
+                    prd_price=product.price,  # 商品単価（マスタから取得）
+                    tax_cd='10'  # 消費税区分（'10'固定）
+                )
+                db.add(db_detail)
+                v_total_amt_ex_tax += product.price
 
         await db.flush()
 
         # 1-3: 合計や税金額を計算
-        # 合計金額（税抜）= 商品単価の合計
-        v_total_amt_ex_tax = sum(item.unit_price for item in purchase.items)
         # 合計金額（税込）= 合計金額（税抜） × 1.1
         v_total_amt = int(v_total_amt_ex_tax * 1.1)
 

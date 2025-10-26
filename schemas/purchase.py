@@ -11,10 +11,8 @@ class TradeDetailBase(BaseModel):
 
 class TradeDetailCreate(BaseModel):
     """購入API用の商品情報（フロントエンドから受け取る）"""
-    product_id: int       # 商品一意キー (PRD_ID)
-    product_code: str     # 商品コード (CODE)
-    product_name: str     # 商品名称 (NAME)
-    unit_price: int       # 商品単価 (PRICE)
+    code: str             # 商品コード
+    qty: int = 1          # 数量（デフォルト1）
 
 class TradeDetail(TradeDetailBase):
     trd_id: int
