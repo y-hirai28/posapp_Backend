@@ -14,6 +14,9 @@ class TradeDetailCreate(BaseModel):
     code: str             # 商品コード
     qty: int = 1          # 数量（デフォルト1）
 
+    class Config:
+        extra = "forbid"  # 定義されていないフィールドを禁止（デバッグ用）
+
 class TradeDetail(TradeDetailBase):
     trd_id: int
     dtl_id: int
